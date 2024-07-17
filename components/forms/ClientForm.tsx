@@ -9,6 +9,7 @@ import SubmitButton from "../SubmitButton";
 import { useState } from "react";
 import { ClientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
+import { createUser } from "@/lib/actions/client.actions";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -32,16 +33,21 @@ const ClientForm = () => {
     },
   });
 
-  async function onSubmit({name, email, phone}: z.infer<typeof ClientFormValidation>) {
+  async function onSubmit(values: z.infer<typeof ClientFormValidation>) {
     setIsLoading(true);
 
     try {
-      // const userData = { name, email, phone}
-      // const user = await createUser(userData)
+      const user = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+      };
 
-      // if (user) router.push(`/clients/${user.$id}/register`)
+      const newUser = await createUser(user);
+
+      if (newUser) router.push(`/clients/${newUser.$id}/register`)
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
 
