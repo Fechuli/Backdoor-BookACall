@@ -79,7 +79,7 @@ const ClientForm = () => {
         <CustomFormField
           iconAlt="phone"
           iconSrc="/icons/email.svg"
-          placeholder="+39 123 456 7890"
+          placeholder="+39 335 585 6366"
           label="Phone number"
           name="phone"
           fieldType={FormFieldType.PHONE_INPUT}

@@ -5,7 +5,7 @@ declare type SearchParamProps = {
     searchParams: { [key: string]: string | string[] | undefined };
   };
   
-  declare type Budget = "<10000" | ">10000";
+  declare type Budget = "<10000€" | ">10000€";
   declare type FindUs = "Awwwards" | "Instagram" | "LinkedIn" | "Other";
   declare type Status = "pending" | "scheduled" | "cancelled";
   

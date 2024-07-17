@@ -17,5 +17,6 @@ export default function Home() {
       </section>
       <Image src={"/images/team.avif"} height={1000} width={1000} alt="Backdoor's Team" className="side-img max-w-[50%]"/>
     </div>
+    
   );
 }
