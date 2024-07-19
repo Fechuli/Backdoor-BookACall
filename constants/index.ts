@@ -20,20 +20,20 @@ export const ClientsFormDefaultValues = {
 
 export const Consultants = [
   {
-    image: "/images/dr-green.png",
-    name: "Tommaso Anzidei",
+    image: "/images/team/tommaso.jpeg",
+    name: "Tommaso Anzidei | Project Manager",
   },
   {
-    image: "/images/dr-cameron.png",
-    name: "Federico Fiaschi",
+    image: "/images/team/federico.jpeg",
+    name: "Federico Fiaschi | Developer",
   },
   {
-    image: "/images/dr-livingston.png",
-    name: "Lorenzo Bonacchi",
+    image: "/images/team/lorenzo.jpeg",
+    name: "Lorenzo Bonacchi | UX/UI Designer",
   },
   {
-    image: "/images/dr-peter.png",
-    name: "Duccio Schiumarini",
+    image: "/images/team/duccio.jpeg",
+    name: "Duccio Schiumarini | Art Director",
   }
 ];
 

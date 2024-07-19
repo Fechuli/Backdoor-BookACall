@@ -19,8 +19,9 @@ import PhoneInput from "react-phone-number-input";
 import "react-datepicker/dist/react-datepicker.css";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
 
-interface Props {
+interface CustomProps {
   control: Control<any>;
   fieldType: FormFieldType;
   name: string;
@@ -35,18 +36,31 @@ interface Props {
   renderSkeleton?: (field: any) => React.ReactNode;
 }
 
-const RenderField = ({ field, props }: { field: any; props: Props }) => {
+const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
   const {
     fieldType,
     iconSrc,
     iconAlt,
     placeholder,
-    showTimeSelect,
-    dateFormat,
     renderSkeleton,
   } = props;
 
   switch (fieldType) {
+    case FormFieldType.SELECT:
+      return (
+        <FormControl>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger className="shad-select-trigger">
+                <SelectValue placeholder={props.placeholder} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent className="shad-select-content">
+              {props.children}
+            </SelectContent>
+          </Select>
+        </FormControl>
+      );
     case FormFieldType.INPUT:
       return (
         <div className="flex rounded-md border border-dark-500 bg-dark-400">
@@ -136,7 +150,7 @@ const RenderField = ({ field, props }: { field: any; props: Props }) => {
     }
 };
 
-const CustomFormField = (props: Props) => {
+const CustomFormField = (props: CustomProps) => {
   const { control, fieldType, name, label } = props;
   return (
     <FormField
