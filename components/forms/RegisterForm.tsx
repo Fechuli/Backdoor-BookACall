@@ -5,7 +5,7 @@ import CustomFormField from "../CustomFormField";
 import { FormFieldType } from "./ClientForm";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { ClientFormValidation, UserFormValidation } from "@/lib/validation";
+import { UserFormValidation } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -45,7 +45,7 @@ const RegisterForm = ({ user }: { user: User }) => {
 
       // @ts-ignore
       const client = await registerClient(clientData);
-      if (client) router.push(`/clients/${client.$id}/new-consultation`);
+      if (client) router.push(`/clients/${client.userId}/new-consultation`);
     } catch (error) {
       console.error(error);
     } finally {

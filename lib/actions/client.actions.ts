@@ -1,5 +1,6 @@
+"use server"
 import { ID, Query } from "node-appwrite";
-import { databases, users } from "../appwrite.config";
+import { CLIENT_COLLECTION_ID, DATABASE_ID, databases, users } from "../appwrite.config";
 import { parseStringify } from "../utils";
 
 export const createUser = async (user: CreateUserParams) => {
@@ -37,8 +38,7 @@ export const getUser = async (userId: string) => {
 
 export const registerClient = async ({...client}: RegisterUserParams) => {
   try {
-    const DATABASE_ID = process.env.NEXT_PUBLIC_DATABASE_ID;
-    const CLIENT_COLLECTION_ID = process.env.NEXT_PUBLIC_CLIENT_COLLECTION_ID;
+    
     const newClient = await databases.createDocument(
       DATABASE_ID!,
       CLIENT_COLLECTION_ID!,
@@ -51,5 +51,34 @@ export const registerClient = async ({...client}: RegisterUserParams) => {
     return parseStringify(newClient);
   } catch (error) {
     console.error("An error occurred while registering a new client:", error);
+  }
+}
+
+export const getClient = async (userId: string) => {
+
+  try {
+
+
+    const query = [Query.equal("userId", [userId])];
+
+    const clients = await databases.listDocuments(
+      DATABASE_ID!,
+      CLIENT_COLLECTION_ID!,
+      query
+    )
+
+    if (!clients.documents || clients.documents.length === 0) {
+      throw new Error("No client found for the given userId");
+    }
+
+    const client = clients.documents[0];
+
+    return parseStringify(client)
+
+  }  catch (error) {
+    console.error(
+      "An error occurred while retrieving the client details:",
+      error
+    );
   }
 }

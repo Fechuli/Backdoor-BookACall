@@ -18,8 +18,8 @@ export interface Appointment extends Models.Document {
   client: Client;
   schedule: Date;
   status: Status;
-  primaryPhysician: string;
-  reason: string;
+  bdMember: string;
+  features: string;
   note: string;
   userId: string;
   cancellationReason: string | null;
