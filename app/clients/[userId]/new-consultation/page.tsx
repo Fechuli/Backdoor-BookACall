@@ -5,7 +5,7 @@ import Image from "next/image";
 export default async function NewConsultation({params: {userId}}: SearchParamProps) {
   const client = await getClient(userId);
   return (
-    <div className="flex h-screen max-h-screen">
+    <div className="flex h-screen max-h-screen lg:overflow-hidden">
       <section className="remove-scrollbar container my-auto">
         <div className="sub-container max-w-[860px] flex-1 justify-between">
           <Image
