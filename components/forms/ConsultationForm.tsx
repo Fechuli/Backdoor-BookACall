@@ -12,17 +12,25 @@ import { FormFieldType } from "./ClientForm";
 import { SelectItem } from "../ui/select";
 import { Consultants } from "@/constants";
 import Image from "next/image";
-import { createAppointment } from "@/lib/actions/appointment.action";
+import {
+  createAppointment,
+  updateAppointment,
+} from "@/lib/actions/appointment.action";
 import { getAppointmentSchema } from "@/lib/validation";
+import { Appointment } from "@/types/appwrite.types";
 
 const ConsultationForm = ({
   userId,
   clientId,
   type,
+  appointment,
+  setOpen,
 }: {
   userId: string;
   clientId: string;
   type: "create" | "schedule" | "cancel";
+  appointment?: Appointment;
+  setOpen: (open: boolean) => void;
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,11 +40,11 @@ const ConsultationForm = ({
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-        bdMember: "",
-        schedule: new Date(),
-        features: "",
-        note: "",
-        cancellationReason: "",
+      bdMember: appointment ? appointment.bdMember : '',
+      schedule: appointment ? new Date(appointment.schedule) : new Date(Date.now()),
+      features: appointment ? appointment.features : '',
+      note: appointment ? appointment.note : '',
+      cancellationReason: appointment?.cancellationReason || '',
     },
   });
 
@@ -45,36 +53,56 @@ const ConsultationForm = ({
 
     let status;
     switch (type) {
-        case 'schedule':
-            status = 'scheduled';
-            break;
-        case 'cancel':
-            status = 'cancelled';
-            break;
-        default:
-            status = 'pending';
-            break;
+      case "schedule":
+        status = "scheduled";
+        break;
+      case "cancel":
+        status = "cancelled";
+        break;
+      default:
+        status = "pending";
+        break;
     }
 
     try {
-      if (type === "create" && clientId ) {
+      if (type === "create" && clientId) {
         const appointmentData = {
-            userId,
-            client: clientId,
-            bdMember: values.bdMember,
-            schedule: new Date(values.schedule),
-            features: values.features as string,
-            note: values.note,
-            status: status as Status
-        }
+          userId,
+          client: clientId,
+          bdMember: values.bdMember,
+          schedule: new Date(values.schedule),
+          features: values.features as string,
+          note: values.note,
+          status: status as Status,
+        };
 
         const appointment = await createAppointment(appointmentData);
 
         if (appointment) {
-            form.reset();
-            router.push(`/clients/${userId}/new-consultation/success?appointmentId=${appointment.$id}`);
+          form.reset();
+          router.push(
+            `/clients/${userId}/new-consultation/success?appointmentId=${appointment.$id}`
+          );
         }
+      } else {
+        const appointmentToUpdate = {
+          userId,
+          appointmentId: appointment?.$id!,
+          appointment: {
+            bdMember: values?.bdMember,
+            schedule: new Date(values?.schedule),
+            status: status as Status,
+            cancellationReason: values?.cancellationReason,
+          },
+          type,
+        };
 
+        const updatedAppointment = await updateAppointment(appointmentToUpdate);
+
+        if (updatedAppointment) {
+          setOpen && setOpen(false);
+          form.reset();
+        }
       }
     } catch (error) {
       console.log(error);
@@ -100,12 +128,12 @@ const ConsultationForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
-        <section className="mb-12 space-y-4">
+        {type === "create" ? <section className="mb-12 space-y-4">
           <h1 className="header">New Consultation</h1>
           <p className="text-dark-700">
             Request a new appointment in 10 second
           </p>
-        </section>
+        </section> : <></>}
 
         {type !== "cancel" && (
           <>
@@ -146,7 +174,7 @@ const ConsultationForm = ({
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
                 name="features"
-                label="What type of features are you looking for?"
+                label="Features to discuss"
                 placeholder="Describe the features you want to discuss"
               />
 
@@ -176,7 +204,9 @@ const ConsultationForm = ({
           className={`${
             type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"
           } w-full`}
-        >{buttonLabel}</SubmitButton>
+        >
+          {buttonLabel}
+        </SubmitButton>
       </form>
     </Form>
   );
